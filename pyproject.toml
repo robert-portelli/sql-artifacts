@@ -1,0 +1,24 @@
+[project]
+name = "sql-artifacts"
+version = "0.1.0"
+description = "A collection of SQL-related materials."
+authors = [
+    {name = "Robert Portelli"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "psycopg (>=3.2.6,<4.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "sql_artifacts", from = "src"}]
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+pytest-cov = "^6.1.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
