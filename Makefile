@@ -34,6 +34,12 @@ shell:
 test:
 	$(COMPOSE) exec $(SERVICE) poetry run pytest
 
+## Run tests with coverage report
+coverage:
+	$(COMPOSE) exec $(SERVICE) poetry run pytest \
+		--cov=src \
+		--cov-report=term
+
 ## Clean containers + volumes
 clean:
 	$(COMPOSE) down --volumes
