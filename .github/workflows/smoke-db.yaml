@@ -1,0 +1,23 @@
+---
+name: Smoke Test PostgreSQL Connection
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: robertportelli/sql-artifacts-dev:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: poetry run pytest tests/test_connection.py
