@@ -12,8 +12,8 @@ repos:
       - id: check-toml
       - id: debug-statements
       - id: double-quote-string-fixer
-      - id: name-tests-test  # follow pytest naming convention
-        args: ['--pattern', '^test_.*\.py$']
+      - id: name-tests-test
+        args: [--pytest-test-first]
       - id: requirements-txt-fixer
       - id: check-merge-conflict  # avoid lingering merge markers
       - id: mixed-line-ending
