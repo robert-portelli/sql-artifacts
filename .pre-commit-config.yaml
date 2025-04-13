@@ -13,6 +13,7 @@ repos:
       - id: debug-statements
       - id: double-quote-string-fixer
       - id: name-tests-test  # follow pytest naming convention
+        args: ['--pattern', '^test_.*\.py$']
       - id: requirements-txt-fixer
       - id: check-merge-conflict  # avoid lingering merge markers
       - id: mixed-line-ending
@@ -77,8 +78,6 @@ repos:
         types: [shell]
         require_serial: true  # shellcheck can detect sourcing this way
         args: [-f, gcc, -x]  # output filename:linenum:colnum (clickable)
-        exclude: |
-          ^test/local_test_runner/unit/.*\.bats$
         # ============ Python ============================
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.1
