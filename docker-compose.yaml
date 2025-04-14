@@ -1,0 +1,26 @@
+---
+# docker-compose.yml
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: sql_artifacts
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://dev:dev@db:5432/sql_artifacts
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    command: sleep infinity
+volumes:
+  pgdata:
