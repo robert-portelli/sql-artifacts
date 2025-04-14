@@ -13,10 +13,21 @@ on:
       - reopened
   workflow_dispatch:
 jobs:
-  test:
+  test-ci-db-connection:
     runs-on: ubuntu-latest
     container:
       image: robertportelli/sql-artifacts-dev:latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: dev
+          POSTGRES_DB: sql_artifacts
+        options: >-
+          --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
+    env:
+      DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
