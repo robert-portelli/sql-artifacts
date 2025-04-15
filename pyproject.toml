@@ -18,6 +18,16 @@ packages = [{include = "sql_artifacts", from = "src"}]
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
 pytest-cov = "^6.1.1"
+rich = "^14.0.0"
+
+[tool.coverage.run]
+data_file = "/tmp/coverage/.coverage"
+omit = [
+    "*/__init__.py"
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report=term --cov-report=html:/tmp/coverage/htmlcov"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
