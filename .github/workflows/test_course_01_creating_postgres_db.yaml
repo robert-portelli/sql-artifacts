@@ -1,0 +1,54 @@
+---
+name: Test Course 01 Creating PostgreSQL Databases
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - development
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+jobs:
+  test-course-01-unit-main:
+    runs-on: ubuntu-latest
+    container:
+      image: robertportelli/sql-artifacts:latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: dev
+          POSTGRES_DB: sql_artifacts
+        options: >-
+          --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
+    env:
+      DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run unit tests
+        run: poetry run pytest tests/course_01_creating_postgresql_db/test_unit_main.py
+  test-course-01-integration-main:
+    runs-on: ubuntu-latest
+    container:
+      image: robertportelli/sql-artifacts:latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: dev
+          POSTGRES_DB: sql_artifacts
+        options: >-
+          --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
+    env:
+      DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run integration tests
+        run: poetry run pytest tests/course_01_creating_postgresql_db/test_integration_main.py
