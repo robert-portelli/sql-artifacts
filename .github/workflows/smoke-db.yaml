@@ -16,7 +16,7 @@ jobs:
   test-ci-db-connection:
     runs-on: ubuntu-latest
     container:
-      image: robertportelli/sql-artifacts-dev:latest
+      image: robertportelli/sql-artifacts:latest
     services:
       postgres:
         image: postgres:15
