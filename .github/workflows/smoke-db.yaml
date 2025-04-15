@@ -31,4 +31,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
-        run: poetry run pytest tests/test_connection.py
+        run: poetry run pytest tests/unit/test_connection.py
