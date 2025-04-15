@@ -31,9 +31,12 @@ jobs:
       DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: poetry install --no-root --with dev
+      - name: Move project into /app
+        run: |
+          mkdir -p /app
+          cp -r . /app
       - name: Run unit tests
+        working-directory: /app
         run: poetry run pytest tests/course_01_creating_postgresql_db/test_unit_main.py
   test-course-01-integration-main:
     runs-on: ubuntu-latest
@@ -52,7 +55,10 @@ jobs:
       DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: poetry install --no-root --with dev
+      - name: Move project into /app
+        run: |
+          mkdir -p /app
+          cp -r . /app
       - name: Run integration tests
+        working-directory: /app
         run: poetry run pytest tests/course_01_creating_postgresql_db/test_integration_main.py
