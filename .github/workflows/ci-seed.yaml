@@ -23,3 +23,4 @@ jobs:
         run: |-
           echo "Dispatching '${{ inputs.target_workflow }}' on ref '${{ inputs.target_ref }}'"
           gh workflow run "${{ inputs.target_workflow }}" --ref "${{ inputs.target_ref }}"
+        # refresh indexing
