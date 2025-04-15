@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
 # Install poetry
 ENV POETRY_HOME="/opt/poetry"
 ENV PATH="$POETRY_HOME/bin:$PATH"
-# the container is the env
 ENV POETRY_VIRTUALENVS_CREATE=false
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
@@ -23,7 +22,18 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock* ./
 RUN poetry install --no-root --with dev
 
-# Now copy the full project
+# Ensure config dir and copy Python startup script
+RUN mkdir -p /root/.config/python
+COPY .config/python/startup.py /root/.config/python/startup.py
+
+# Set PYTHONSTARTUP for REPL sessions
+ENV PYTHONSTARTUP=/root/.config/python/startup.py
+
+# Set PYTHONSTARTUP env var for all interactive REPL sessions
+ENV PYTHONSTARTUP=/root/.config/python/startup.py
+
+# Now copy full project
 COPY . .
 
+# Default command
 CMD ["poetry", "run", "pytest"]

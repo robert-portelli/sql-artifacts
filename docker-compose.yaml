@@ -1,26 +1,55 @@
 ---
 # docker-compose.yml
 services:
-  db:
+  dev-db:
     image: postgres:15
     environment:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: dev
-      POSTGRES_DB: sql_artifacts
+      POSTGRES_DB: sql_artifacts_dev_db
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    profiles: ["dev"]
   dev:
+    container_name: sql_artifacts_dev
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: postgres://dev:dev@db:5432/sql_artifacts
+      DATABASE_URL: postgres://dev:dev@dev-db:5432/sql_artifacts
     volumes:
       - .:/app
     depends_on:
-      - db
+      - dev-db
     command: sleep infinity
+    profiles: ["dev"]
+  test-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: sql_artifacts_test_db
+    ports:
+      - "55432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    profiles: ["ephemeral"]
+  test-runner:
+    container_name: sql_artifacts_test_runner
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://test:test@test-db:5432/sql_artifacts_test_db
+      PYTHONPATH: /app/src
+    volumes:
+      - .:/app
+      - coverage_data:/tmp/coverage
+    working_dir: /app
+    depends_on:
+      - test-db
+    profiles: ["ephemeral"]
 volumes:
   pgdata:
