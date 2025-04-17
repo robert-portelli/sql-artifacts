@@ -7,16 +7,16 @@ SERVICE = dev
 
 ## Start containers in background
 up:
-	$(COMPOSE) up -d
+	docker compose --profile dev up -d
 
 ## Stop and remove containers
 down:
-	$(COMPOSE) down
+	docker compose down
 
 ## Rebuild and start containers
 restart:
 	$(COMPOSE) down
-	$(COMPOSE) up -d --build
+	$(COMPOSE) --profile dev up -d --build
 
 ## Build containers without running
 build:
@@ -30,15 +30,17 @@ logs:
 shell:
 	$(COMPOSE) exec $(SERVICE) bash
 
-## Run tests in dev container
 test:
-	$(COMPOSE) exec $(SERVICE) poetry run pytest
+	docker compose run --rm test-runner poetry run pytest
 
-## Run tests with coverage report
 coverage:
-	$(COMPOSE) exec $(SERVICE) poetry run pytest \
+	docker compose run --rm test-runner poetry run pytest \
 		--cov=src \
-		--cov-report=term
+		--cov-report=term-missing
+
+ci-test:
+	docker compose --profile test up --abort-on-container-exit --exit-code-from test-runner
+
 
 ## Clean containers + volumes
 clean:
@@ -61,4 +63,4 @@ help:
 
 # 🌳 Show project structure
 tree:
-	@tree --prune -I "*~|__pycache__|*.bak"
+	@tree -a --prune -I "*~|__pycache__|*.bak|.git|*_cache"
