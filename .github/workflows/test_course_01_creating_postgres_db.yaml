@@ -29,15 +29,11 @@ jobs:
           --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
     env:
       DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
+      PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
-      - name: Move project into /app
-        run: |
-          mkdir -p /app
-          cp -r . /app
       - name: Run unit tests
-        working-directory: /app
-        run: poetry run pytest tests/course_01_creating_postgresql_db/test_unit_main.py
+        run: pytest tests/course_01_creating_postgresql_db/test_unit_main.py
   test-course-01-integration-main:
     runs-on: ubuntu-latest
     container:
@@ -53,12 +49,8 @@ jobs:
           --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
     env:
       DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
+      PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
-      - name: Move project into /app
-        run: |
-          mkdir -p /app
-          cp -r . /app
       - name: Run integration tests
-        working-directory: /app
-        run: poetry run pytest tests/course_01_creating_postgresql_db/test_integration_main.py
+        run: pytest tests/course_01_creating_postgresql_db/test_integration_main.py
