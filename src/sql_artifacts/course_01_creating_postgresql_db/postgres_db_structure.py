@@ -61,6 +61,9 @@ class SbaFixtureBuilder(PostgresCommandRunner):
     reusable command lambdas.
     """
 
+    def __init__(self, mode: str | None = None):
+        super().__init__(mode=mode)
+
     def create_table_users(self, schema: str = "public"):
         """
         Creates the `users` table in the given schema if it doesn't exist.

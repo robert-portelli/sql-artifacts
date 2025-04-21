@@ -133,9 +133,9 @@ class PostgresCommandRunner:
     Designed for test fixtures and batch query operations.
     """
 
-    def __init__(self, dsn=None):
+    def __init__(self, mode: str | None = None):
         # Holds an instance of DatabaseClient for use in db_cmd(s)
-        self.db_client = DatabaseClient(dsn)
+        self.db_client = DatabaseClient(mode)
 
     def db_cmd(self, cmd):
         """
