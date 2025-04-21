@@ -40,6 +40,14 @@ class DatabaseClient:
         if self.conn:
             self.conn.close()
 
+    def quote_ident(self, ident):
+        """Safely quote a SQL identifier (e.g., schema, table, column)."""
+        return '"' + ident.replace('"', '""') + '"'
+
+    def escape_literal(self, value):
+        """Safely escape a string value as a SQL literal."""
+        return "'" + str(value).replace("'", "''") + "'"
+
     def execute(self, query, params=None):
         """
         Execute a query with optional parameters and commit the transaction.
@@ -52,6 +60,29 @@ class DatabaseClient:
         except Exception:
             self.conn.rollback()
             raise
+
+    def execute_insert(self, table: str, fields: list[str], values: list[tuple]):
+        """
+        Safely generate and execute a parameterized INSERT statement.
+
+        Args:
+            table (str): Table name (unquoted).
+            fields (list[str]): Column names (unquoted).
+            values (list[tuple]): One or more row tuples.
+        """
+        quoted_table = self.quote_ident(table)
+        quoted_fields = ", ".join(self.quote_ident(f) for f in fields)
+        placeholders = ", ".join(["%s"] * len(fields))
+        query = f"INSERT INTO {quoted_table} ({quoted_fields}) VALUES ({placeholders})"
+
+        # Support single-row or multi-row insert
+        with self.conn.cursor() as cur:
+            if len(values) == 1:
+                cur.execute(query, values[0])
+            else:
+                cur.executemany(query, values)
+
+        self.conn.commit()
 
     def fetchall(self, query, params=None):
         """
