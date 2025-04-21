@@ -29,9 +29,6 @@ COPY .config/python/startup.py /root/.config/python/startup.py
 # Set PYTHONSTARTUP for REPL sessions
 ENV PYTHONSTARTUP=/root/.config/python/startup.py
 
-# Set PYTHONSTARTUP env var for all interactive REPL sessions
-ENV PYTHONSTARTUP=/root/.config/python/startup.py
-
 # Now copy full project
 COPY . .
 

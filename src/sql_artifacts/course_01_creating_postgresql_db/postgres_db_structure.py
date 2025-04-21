@@ -36,7 +36,7 @@ class PGUser(BaseModel):
     last_name: str
     email: EmailStr
     hashed_password: Annotated[str, StringConstraints(min_length=72, max_length=72)]
-    schema: str = "public"  # Default schema for user table
+    pg_schema: str = "public"  # Default schema for user table
 
     def to_insert_sql(self) -> str:
         """
