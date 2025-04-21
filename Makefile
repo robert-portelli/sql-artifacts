@@ -31,6 +31,7 @@ shell:
 	$(COMPOSE) exec $(SERVICE) bash
 
 test:
+	docker compose rm -fs test-db
 	docker compose run --rm test-runner poetry run pytest
 
 coverage:
