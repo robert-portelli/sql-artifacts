@@ -61,6 +61,104 @@ class SbaFixtureBuilder(PostgresCommandRunner):
     reusable command lambdas.
     """
 
+    def create_table_users(self, schema: str = "public"):
+        """
+        Creates the `users` table in the given schema if it doesn't exist.
+
+        Args:
+            schema (str): Target schema name (defaults to "public")
+
+        Fields:
+        - id: Primary key
+        - first_name: User's first name
+        - last_name: User's last name
+        - email: User's email address
+        - hashed_password: 72-character hashed password (e.g., bcrypt)
+        """
+        self.db_cmd(
+            lambda db: db.execute(f"""
+                CREATE TABLE IF NOT EXISTS {db.quote_ident(schema)}.users (
+                    id SERIAL PRIMARY KEY,
+                    first_name TEXT NOT NULL,
+                    last_name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    hashed_password CHAR(72) NOT NULL
+                );
+            """),
+        )
+
+    def insert_user(self, user: PGUser):
+        """
+        Inserts a PGUser instance into the appropriate schema's users table.
+
+        Args:
+            user (PGUser): The user object to insert.
+        """
+        self.db_cmd(
+            lambda db: db.execute(
+                f"""
+                INSERT INTO {db.quote_ident(user.pg_schema)}.users
+                    (id, first_name, last_name, email, hashed_password)
+                VALUES (%s, %s, %s, %s, %s);
+                """,
+                (
+                    user.id,
+                    user.first_name,
+                    user.last_name,
+                    user.email,
+                    user.hashed_password,
+                ),
+            ),
+        )
+
+    def create_schema(self, name: str):
+        """
+        Create a schema if it does not exist.
+        """
+        self.db_cmd(
+            lambda db: db.execute(f"""
+                CREATE SCHEMA IF NOT EXISTS {db.quote_ident(name)};
+            """),
+        )
+
+    def create_table_bank(self, schema: str, with_express_provider: bool = False):
+        """
+        Create a 'bank' table in the given schema.
+
+        Args:
+            schema (str): Target schema name.
+            with_express_provider (bool): Whether to include the express_provider column.
+        """
+        extra_col = ", express_provider BOOLEAN" if with_express_provider else ""
+        self.db_cmd(
+            lambda db: db.execute(f"""
+                CREATE TABLE IF NOT EXISTS {db.quote_ident(schema)}.bank (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(100) NOT NULL
+                    {extra_col}
+                );
+            """),
+        )
+
+    def create_table_borrower(self, schema: str, with_individual_flag: bool = False):
+        """
+        Create a 'borrower' table in the given schema.
+
+        Args:
+            schema (str): Target schema name.
+            with_individual_flag (bool): Whether to include the 'individual' BOOLEAN column.
+        """
+        extra_col = ", individual BOOLEAN" if with_individual_flag else ""
+        self.db_cmd(
+            lambda db: db.execute(f"""
+                CREATE TABLE IF NOT EXISTS {db.quote_ident(schema)}.borrower (
+                    id SERIAL PRIMARY KEY,
+                    full_name VARCHAR(100) NOT NULL
+                    {extra_col}
+                );
+            """),
+        )
+
     def create_table_business_type(self):
         """
         Creates the `business_type` table if it does not already exist.
