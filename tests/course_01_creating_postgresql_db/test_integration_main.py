@@ -5,7 +5,9 @@ Covers insertions, constraints, and multi-row queries across business_type and a
 """
 
 import pytest
-from sql_artifacts.course_01_creating_postgresql_db.main import SbaFixtureBuilder
+from sql_artifacts.course_01_creating_postgresql_db.postgres_db_structure import (
+    SbaFixtureBuilder,
+)
 from sql_artifacts.db_client import DatabaseClient
 import psycopg
 
