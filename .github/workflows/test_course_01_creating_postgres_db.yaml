@@ -32,6 +32,8 @@ jobs:
       PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: poetry install --no-root --with dev
       - name: Run unit tests
         run: pytest tests/course_01_creating_postgresql_db/test_unit_main.py
   test-course-01-integration-main:
@@ -52,5 +54,7 @@ jobs:
       PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: poetry install --no-root --with dev
       - name: Run integration tests
         run: pytest tests/course_01_creating_postgresql_db/test_integration_main.py
