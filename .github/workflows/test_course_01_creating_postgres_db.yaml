@@ -14,21 +14,43 @@ on:
       - reopened
   workflow_dispatch:
 jobs:
+  test-full-course:
+    runs-on: ubuntu-latest
+    container:
+      image: robertportelli/sql-artifacts:latest
+    services:
+      test-db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: sql_artifacts_test_db
+        options: >-
+          --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
+    env:
+      DATABASE_URL: postgres://test:test@test-db:5432/sql_artifacts_test_db
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: poetry install --no-root --with dev
+      - name: Run unit tests
+        run: pytest tests/course_01_creating_postgresql_db/test_full_course_workflow.py
   test-course-01-unit-main:
     runs-on: ubuntu-latest
     container:
       image: robertportelli/sql-artifacts:latest
     services:
-      postgres:
+      test-db:
         image: postgres:15
         env:
-          POSTGRES_USER: dev
-          POSTGRES_PASSWORD: dev
-          POSTGRES_DB: sql_artifacts
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: sql_artifacts_test_db
         options: >-
           --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
     env:
-      DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
+      DATABASE_URL: postgres://test:test@test-db:5432/sql_artifacts_test_db
       PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
@@ -41,16 +63,16 @@ jobs:
     container:
       image: robertportelli/sql-artifacts:latest
     services:
-      postgres:
+      test-db:
         image: postgres:15
         env:
-          POSTGRES_USER: dev
-          POSTGRES_PASSWORD: dev
-          POSTGRES_DB: sql_artifacts
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: sql_artifacts_test_db
         options: >-
           --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
     env:
-      DATABASE_URL: postgres://dev:dev@postgres:5432/sql_artifacts
+      DATABASE_URL: postgres://test:test@postgres:5432/sql_artifacts_test_db
       PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - uses: actions/checkout@v4
