@@ -30,14 +30,59 @@ logs:
 shell:
 	$(COMPOSE) exec $(SERVICE) bash
 
+## Run tests (optionally specify a path with T=tests/...)
+## Arguments:
+##   T      - (Optional) Path to a specific test file. Defaults to `tests`.
+##
+## Examples:
+##   make test
+##   make test T=tests/course_02_intermediate_sql/test_loader.py
 test:
+	@echo "Running pytest on path: $${T:-tests}"
 	docker compose rm -fs test-db
-	docker compose run --rm test-runner poetry run pytest
+	docker compose run --rm test-runner \
+		sh -c 'poetry run pytest --override-ini="addopts=" "$${T:-tests}"'
 
+## Run tests (optionally specify a path with T=tests/...)
+## Arguments:
+##   T      - (Optional) Path to a specific test file or directory.
+##
+## Examples:
+##   make test
+##   make test T=tests/course_02_intermediate_sql/test_loader.py
+test:
+	@echo "Running tests at path: $${T:-tests}"
+	docker compose rm -fs test-db
+	docker compose run --rm test-runner \
+		sh -c 'poetry run pytest $${T:-tests}'
+
+## Run tests with live logging output (optionally specify LEVEL and T)
+## Arguments:
+##   LEVEL  - (Optional) Logging level (INFO, DEBUG, etc.). Defaults to INFO.
+##   T      - (Optional) Path to a specific test file or directory.
+##
+## Examples:
+##   make test-verbose LEVEL=DEBUG
+##   make test-verbose LEVEL=INFO T=tests/course_02_intermediate_sql/test_loader.py
+test-verbose:
+	@echo "Running tests with LOG_LEVEL=$${LEVEL:-INFO} at path: $${T:-tests}"
+	docker compose rm -fs test-db
+	docker compose run --rm -e LOG_LEVEL=$${LEVEL:-INFO} test-runner \
+		sh -c 'poetry run pytest -s $${T:-tests}'
+
+## Run tests with code coverage and HTML output
+## Arguments:
+##   T      - (Optional) Path to a specific test file or directory.
+##
+## Examples:
+##   make coverage
+##   make coverage T=tests/unit/test_db_client.py
 coverage:
-	docker compose run --rm test-runner poetry run pytest \
-		--cov=src \
-		--cov-report=term-missing
+	@echo "Running tests with coverage at path: $${T:-tests}"
+	docker compose rm -fs test-db
+	docker compose run --rm test-runner \
+		sh -c 'poetry run pytest --cov=src --cov-report=term --cov-report=html:coverage_html $${T:-tests}'
+
 
 ci-test:
 	docker compose --profile test up --abort-on-container-exit --exit-code-from test-runner
