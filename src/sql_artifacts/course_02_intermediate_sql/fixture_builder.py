@@ -28,3 +28,48 @@ class FilmsFixtureBuilder(PostgresCommandRunner):
         );
         """
         self.db_cmd(lambda db: db.execute(ddl))
+
+    def create_table_people(self):
+        """
+        Creates the 'people' table using the schema defined in CsvHeaderRegistry.
+        """
+        fields = CsvHeaderRegistry.for_file(self._target)
+        column_definitions = ",\n    ".join(
+            f'"{field.name}" {field.postgres_type.value}' for field in fields
+        )
+        ddl = f"""
+        CREATE TABLE IF NOT EXISTS people (
+            {column_definitions}
+        );
+        """
+        self.db_cmd(lambda db: db.execute(ddl))
+
+    def create_table_reviews(self):
+        """
+        Creates the 'reviews' table using the schema defined in CsvHeaderRegistry.
+        """
+        fields = CsvHeaderRegistry.for_file(self._target)
+        column_definitions = ",\n    ".join(
+            f'"{field.name}" {field.postgres_type.value}' for field in fields
+        )
+        ddl = f"""
+        CREATE TABLE IF NOT EXISTS reviews (
+            {column_definitions}
+        );
+        """
+        self.db_cmd(lambda db: db.execute(ddl))
+
+    def create_table_roles(self):
+        """
+        Creates the 'roles' table using the schema defined in CsvHeaderRegistry.
+        """
+        fields = CsvHeaderRegistry.for_file(self._target)
+        column_definitions = ",\n    ".join(
+            f'"{field.name}" {field.postgres_type.value}' for field in fields
+        )
+        ddl = f"""
+        CREATE TABLE IF NOT EXISTS roles (
+            {column_definitions}
+        );
+        """
+        self.db_cmd(lambda db: db.execute(ddl))
