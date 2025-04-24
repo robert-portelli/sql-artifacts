@@ -1,0 +1,32 @@
+---
+name: Test Course 02 Intermediate SQL
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - development
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+jobs:
+  test-fixture-films:
+    uses: ./.github/workflows/pg-test-runner.yaml
+    with:
+      test_file: tests/course_02_intermediate_sql/test_fixture_films.py
+  test-fixture-people:
+    uses: ./.github/workflows/pg-test-runner.yaml
+    with:
+      test_file: tests/course_02_intermediate_sql/test_fixture_people.py
+  test-fixture-reviews:
+    uses: ./.github/workflows/pg-test-runner.yaml
+    with:
+      test_file: tests/course_02_intermediate_sql/test_fixture_reviews.py
+  test-fixture-roles:
+    uses: ./.github/workflows/pg-test-runner.yaml
+    with:
+      test_file: tests/course_02_intermediate_sql/test_fixture_roles.py

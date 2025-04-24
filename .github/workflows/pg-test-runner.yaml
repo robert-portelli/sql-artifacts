@@ -1,0 +1,31 @@
+---
+name: Reusable Runner for Postgres Tests
+on:
+  workflow_call:
+    inputs:
+      test_file:
+        required: true
+        type: string
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: robertportelli/sql-artifacts:latest
+    services:
+      test-db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: sql_artifacts_test_db
+        options: >-
+          --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=5
+    env:
+      DATABASE_URL: postgres://test:test@test-db:5432/sql_artifacts_test_db
+      PYTHONPATH: ${{ github.workspace }}/src
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: poetry install --no-root --with dev
+      - name: Run unit tests
+        run: pytest ${{ inputs.test_file }}
