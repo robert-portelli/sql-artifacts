@@ -30,6 +30,14 @@ logs:
 shell:
 	$(COMPOSE) exec $(SERVICE) bash
 
+## Test Course 02
+test-c2:
+	docker compose rm -fs test-db && docker compose run --rm -e LOG_LEVEL=DEBUG test-runner poetry run pytest --cov=src/sql_artifacts/course_02_intermediate_sql/ --cov-report=term tests/course_02_intermediate_sql/
+
+## Test Course 02 CI
+test-c2-ci:
+	gh act -W .github/workflows/test_course_02_intermediate_sql.yaml -P ubuntu-latest=robertportelli/sql-artifacts
+
 ## Run tests (optionally specify a path with T=tests/...)
 ## Arguments:
 ##   T      - (Optional) Path to a specific test file. Defaults to `tests`.
@@ -82,7 +90,6 @@ coverage:
 	docker compose rm -fs test-db
 	docker compose run --rm test-runner \
 		sh -c 'poetry run pytest --cov=src --cov-report=term --cov-report=html:coverage_html $${T:-tests}'
-
 
 ci-test:
 	docker compose --profile test up --abort-on-container-exit --exit-code-from test-runner
